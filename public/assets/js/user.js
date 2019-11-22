@@ -17,7 +17,7 @@ $('#userForm').on('submit',function(){
     })
     return false;
 })
-// 当用户选择文件的时候
+// 上传用户头像当用户选择文件的时候
 $('#avatar').on('change',  function () {
 	// 用户选择到的文件
 	// this.files[0]
@@ -40,3 +40,13 @@ $('#avatar').on('change',  function () {
 		}
 	})
 });
+//用户列表展示
+$.ajax({
+    url:'/users',
+    type:'get',
+    success:function(response){
+       console.log(response);
+       var html = template('userTpl',{data: response});
+       $('#userBox').html(html);
+    }
+})
