@@ -18,8 +18,9 @@ $('#userForm').on('submit',function(){
     return false;
 })
 // 上传用户头像当用户选择文件的时候
-$('#avatar').on('change',  function () {
-	// 用户选择到的文件
+//avatar在script模板中不能用change交给父元素处理
+$('#modifyBox').on('change','#avatar',function(){
+     // 用户选择到的文件
 	// this.files[0]
 	var formData = new FormData();
 	formData.append('avatar', this.files[0]);
@@ -49,4 +50,35 @@ $.ajax({
        var html = template('userTpl',{data: response});
        $('#userBox').html(html);
     }
+})
+//修改用户信息功能利用事件委托
+$('#userBox').on('click','.edit',function(){
+     var id = $(this).attr('data-id');
+     $.ajax({
+         url:'/users/'+id,
+         type:'get',
+         data:id,
+         success:function(response){
+             console.log(response);
+             var html = template('modifyTpl',response);
+             $('#modifyBox').html(html);
+         }
+     })
+})
+//为修改的表单添加表单提交事件
+$('#modifyBox').on('submit','#modifyForm',function(){
+    //获取用户输入的内容
+    var formData = $(this).serialize();
+    //获取要修改的id
+    var id = $(this).attr('data-id');
+    $.ajax({
+        type:'put',
+        url:'/users/'+id,
+        data:formData,
+        success:function(){
+            location.reload();
+        }
+    })
+    return false;
+
 })
